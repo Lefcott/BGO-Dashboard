@@ -1,10 +1,15 @@
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { useEffect, useRef, useState } from 'react';
 
+import { getItems } from './utils';
+
 const Breadcrumb2 = props => {
+  const router = useRouter();
   const breadcrumbRef = useRef();
   const [arrowSize, setArrowSize] = useState(0);
   const [breadcrumbHeight, setBreadcrumbHeight] = useState(0);
+  const items = getItems(props.items, router.pathname);
 
   useEffect(() => {
     const height = breadcrumbRef.current.offsetHeight;
@@ -18,9 +23,9 @@ const Breadcrumb2 = props => {
 
   return (
     <div className="breadcrumb" ref={breadcrumbRef}>
-      {props.items.map((item, i) => {
+      {items.map((item, i) => {
         const isFirst = i === 0;
-        const reverseIndex = props.items.length - 1 - i;
+        const reverseIndex = items.length - 1 - i;
 
         return (
           <div key={i} className="itemContainer">
@@ -104,9 +109,14 @@ const Breadcrumb2 = props => {
 Breadcrumb2.propTypes = {
   items: PropTypes.arrayOf(
     PropTypes.shape({
-      text: PropTypes.string.isRequired,
-      link: PropTypes.string
-    })
+      regex: PropTypes.any.isRequired,
+      items: PropTypes.arrayOf(
+        PropTypes.shape({
+          text: PropTypes.string.isRequired,
+          link: PropTypes.string
+        })
+      ).isRequired
+    }).isRequired
   ).isRequired
 };
 

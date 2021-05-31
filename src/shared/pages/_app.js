@@ -1,4 +1,4 @@
-import { Provider, useDispatch } from 'react-redux';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 import { combineReducers, createStore } from 'redux';
@@ -26,6 +26,7 @@ const ReduxFiller = props => {
   const dispatch = useDispatch();
   const handleError = useHandleError();
   const changeLanguage = useChangeLanguage();
+  const session = useSelector(store => store.session);
   const { constants } = props;
   const router = useRouter();
   const { query } = router || { query: {} };
@@ -33,7 +34,7 @@ const ReduxFiller = props => {
   const isAdminPage = process.browser && window.location.pathname === '/admin';
 
   useEffect(() => {
-    if (!isAdminPage) {
+    if (!isAdminPage && constants.HAS_CONFIGURATION) {
       showProject(constants.PROJECT_CODE)
         .then(({ data: project }) => {
           dispatch(setProject(project));
@@ -51,18 +52,19 @@ const ReduxFiller = props => {
     changeLanguage(constants.DEFAULT_LANGUAGE, false);
   }, []);
 
-  if (constants.HAS_LOGIN) {
+  useEffect(() => {
+    if (!constants.HAS_SESSIONS || session) return;
     getSessions()
-      .then(({ data: sessions }) => {
-        const [session] = sessions;
-        if (!session) return dispatch(setSession({ user: null }));
-        const { user: newUser } = session;
+      .then(({ data: givenSessions }) => {
+        const [newSession] = givenSessions;
+        if (!newSession) return dispatch(setSession({ user: null }));
+        const { user: newUser } = newSession;
 
         dispatch(setUser(newUser));
-        dispatch(setSession(session));
+        dispatch(setSession(newSession));
       })
       .catch(handleError);
-  }
+  }, [session]);
 
   useEffect(() => {
     dispatch(setQueryParams(query));
@@ -75,8 +77,9 @@ ReduxFiller.propTypes = {
   onError: PropTypes.func.isRequired,
   constants: PropTypes.shape({
     PROJECT_CODE: PropTypes.string.isRequired,
-    HAS_LOGIN: PropTypes.bool.isRequired,
-    DEFAULT_LANGUAGE: PropTypes.string.isRequired
+    DEFAULT_LANGUAGE: PropTypes.string.isRequired,
+    HAS_CONFIGURATION: PropTypes.bool.isRequired,
+    HAS_SESSIONS: PropTypes.bool.isRequired
   }).isRequired
 };
 
@@ -93,8 +96,8 @@ const getApp = (reducer, constants, AppendComponent) => {
 
     return (
       <>
-        <AppendComponent />
         <Provider store={store}>
+          <AppendComponent />
           <ReduxFiller constants={constants} onError={setErrorCode} />
           {errorCode && <ErrorMessage code={errorCode} />}
           <Alerts />

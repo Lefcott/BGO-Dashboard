@@ -25,7 +25,6 @@ const Button = props => {
             font-size: 26px;
             height: 30px;
             text-align: center;
-            cursor: pointer;
             user-select: none;
             transition: 0.7s;
           }
@@ -74,13 +73,14 @@ const Button = props => {
 };
 
 Button.propTypes = {
-  onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func,
   symbol: PropTypes.any.isRequired,
   showText: PropTypes.bool.isRequired,
   text: PropTypes.string
 };
 
 Button.defaultProps = {
+  onClick: () => {},
   text: ''
 };
 

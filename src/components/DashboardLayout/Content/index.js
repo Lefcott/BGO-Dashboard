@@ -13,10 +13,13 @@ const Content = props => {
           .content {
             position: absolute;
             left: ${sidebarWidth}px;
-            top: ${navbarHeight}px;
-            width: calc(100% - ${sidebarWidth}px);
-            height: calc(100% - ${navbarHeight}px);
+            top: 0;
+            width: calc(100% - ${sidebarWidth}px - 14px);
+            height: 100%;
+            margin-left: 14px;
+            padding-top: ${sidebarWidth}px;
             transition: 0.7s;
+            overflow-y: auto;
           }
         `}
       </style>
@@ -25,7 +28,11 @@ const Content = props => {
 };
 
 Content.propTypes = {
-  children: PropTypes.any.isRequired
+  children: PropTypes.any
+};
+
+Content.defaultProps = {
+  children: ''
 };
 
 export default Content;
