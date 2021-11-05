@@ -3,19 +3,27 @@ import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import Spinner from '../../../Spinner';
-import { uploadImage } from '../../../../services/cloudinary/image';
+import usePushAlert from '../../../../shared/hooks/usePushAlert';
+import { uploadFile } from '../../../../services/cloudinary/file';
 import OpenableImage from '../../../OpenableImage';
 import { getFieldKeyTranslation } from '../../../../translations/fieldKeys';
 import { fieldShape } from '../../../../utils/field';
+import { isImageFromName, isVideoFromName } from '../../../../utils/files';
+
+import { getLanguage } from './lang';
 
 const Image = props => {
   const { field, value } = props;
   const languageCode = useSelector(store => store.language);
+  const language = getLanguage(languageCode);
   const keyTranslation = getFieldKeyTranslation(languageCode);
+  const pushAlert = usePushAlert();
   const project = useSelector(store => store.project);
+  const dashboardProject = useSelector(store => store.dashboardProject);
+  const finalProject = dashboardProject || project;
   const [uploading, setUploading] = useState(false);
   const input = useRef(null);
-  const fieldName = field.name || keyTranslation[field.key];
+  const fieldName = (field.names && field.names[languageCode]) || field.name || keyTranslation[field.key];
 
   const handleOpenFileSelector = () => {
     input.current.click();
@@ -26,11 +34,14 @@ const Image = props => {
 
     if (!file) return;
 
+    if (!isVideoFromName(file.name) && !isImageFromName(file.name))
+      return pushAlert({ type: 'error', ...language.incorrectType });
+
     setUploading(true);
 
-    uploadImage(project, file).then(body => {
+    uploadFile(finalProject, file).then(({ data: upload }) => {
       setUploading(false);
-      props.onChange(body.secure_url);
+      props.onChange(upload.secure_url);
     });
   };
 

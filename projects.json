@@ -1,7 +1,7 @@
 {
-  "empty": {
-    "path": "src/projects/empty",
-    "repo": "https://{{GITHUB_TOKEN}}@github.com/WeBuildWebZ/BGO-Empty"
+  "starter": {
+    "path": "src/projects/starter",
+    "repo": "https://{{GITHUB_TOKEN}}@github.com/WeBuildWebZ/BGO-Starter"
   },
   "landing": {
     "path": "src/projects/landing",
@@ -43,9 +43,9 @@
     "path": "src/projects/chatbot-site",
     "repo": "https://{{GITHUB_TOKEN}}@github.com/Lefcott/BGO-ChatbotSite"
   },
-  "digital-cards": {
-    "path": "src/projects/digital-cards",
-    "repo": "https://{{GITHUB_TOKEN}}@github.com/Lefcott/BGO-DigitalCards"
+  "miniweb": {
+    "path": "src/projects/miniweb",
+    "repo": "https://{{GITHUB_TOKEN}}@github.com/Lefcott/BGO-MiniWeb"
   },
   "guitar": {
     "path": "src/projects/guitar",
@@ -58,5 +58,17 @@
   "dashboard": {
     "path": "src/projects/dashboard",
     "repo": "https://{{GITHUB_TOKEN}}@github.com/Lefcott/BGO-dashboard"
+  },
+  "carpediem": {
+    "path": "src/projects/carpediem",
+    "repo": "https://{{GITHUB_TOKEN}}@github.com/Lefcott/BGO-Carpediem"
+  },
+  "regazza": {
+    "path": "src/projects/regazza",
+    "repo": "https://{{GITHUB_TOKEN}}@github.com/Lefcott/BGO-Regazza-Bags"
+  },
+  "femelibros": {
+    "path": "src/projects/femelibros",
+    "repo": "https://{{GITHUB_TOKEN}}@github.com/Lefcott/BGO-Femelibros"
   }
 }

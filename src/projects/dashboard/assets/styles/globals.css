@@ -9,9 +9,18 @@ a {
   padding: 0;
   margin: 0;
   font-family: 'raleway', Arial, Helvetica, sans-serif;
+  cursor: url('/images/cursor.png'), auto;
 }
 
-/* lean, esta es una clase que va a estar a lo largo de la web, para no repetir tanto flex */
+.pointer-cursor {
+  cursor: url('/images/pointer-cursor.png') 14 0, auto !important;
+}
+
+
+.text-cursor {
+  cursor: url('/images/text-cursor.png') 16 16, auto !important;
+}
+
 .center {
   display: flex;
   justify-content: center;

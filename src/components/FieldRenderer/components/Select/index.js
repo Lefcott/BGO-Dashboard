@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { FormControl, InputLabel, MenuItem, Select as SelectInput } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
-import { fieldShape } from '../../../../utils/field';
+import { fieldShape, getFieldOptions } from '../../../../utils/field';
 import { getFieldKeyTranslation } from '../../../../translations/fieldKeys';
 
 import { getLanguage } from './lang';
@@ -13,13 +13,10 @@ const Select = props => {
   const languageCode = useSelector(store => store.language);
   const keyTranslation = getFieldKeyTranslation(languageCode);
   const language = getLanguage(languageCode);
-  const project = useSelector(store => store.project);
-  const fieldName = field.name || keyTranslation[field.key];
+  const project = useSelector(store => store.project) || useSelector(store => store.dashboardProject);
+  const fieldName = (field.names && field.names[languageCode]) || field.name || keyTranslation[field.key];
 
-  const options =
-    (field.options?.length && field.options) ||
-    project.configuration[field.options_reference.form_code][field.options_reference.field_key] ||
-    [];
+  const options = getFieldOptions(project, field);
   const optionFields = options.find(option => option.key === value)?.fields;
 
   const handleChangeValue = ({ target }) => {

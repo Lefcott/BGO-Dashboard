@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import MenuOpenRounded from '@material-ui/icons/MenuOpenRounded';
 import MenuRounded from '@material-ui/icons/MenuRounded';
-import SettingsRounded from '@material-ui/icons/SettingsRounded';
 
 import { setSidebarWidth } from '../../../shared/actions/sidebarWidth';
 
 import Button from './Button';
 import { getLanguage } from './lang';
 
-const Sidebar = () => {
+const Sidebar = props => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const language = getLanguage(useSelector(store => store.language));
@@ -50,16 +50,16 @@ const Sidebar = () => {
         showText={open}
         onClick={handleToggle}
       />
-      <Link href="/dashboard/configuration">
-        <a>
-          <Button
-            symbol={<SettingsRounded />}
-            text={language.basicConfig}
-            showText={open}
-            // onClick={handleRedirect('/dashboard/cards')}
-          />
-        </a>
-      </Link>
+      {props.buttons.map((button, i) => {
+        const buttonComponent = <Button symbol={button.symbol} text={button.text} showText={open} />;
+
+        if (!button.link) return buttonComponent;
+        return (
+          <Link href={button.link} key={i}>
+            <a>{buttonComponent}</a>
+          </Link>
+        );
+      })}
       <style jsx>
         {`
           .sidebar {
@@ -69,7 +69,7 @@ const Sidebar = () => {
             width: ${sidebarWidth}px;
             height: 100%;
             border-top-right-radius: 14px;
-            background-image: linear-gradient(to top, skyblue, #ebebeb);
+            background: #3b5998;
             transition: 0.7s;
             z-index: 500;
           }
@@ -97,6 +97,15 @@ const Sidebar = () => {
       </style>
     </div>
   );
+};
+
+Sidebar.propTypes = {
+  buttons: PropTypes.arrayOf(
+    PropTypes.shape({
+      text: PropTypes.string,
+      symbol: PropTypes.any.isRequired
+    })
+  ).isRequired
 };
 
 export default Sidebar;

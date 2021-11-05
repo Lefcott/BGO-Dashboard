@@ -5,12 +5,7 @@ import { useSelector } from 'react-redux';
 
 import InfiniteScroll from '../../../../../../../InfiniteScroll';
 import Table from '../../../../../../../Table';
-import {
-  createClientDocument,
-  updateClientDocument,
-  getClientDocuments,
-  deleteClientDocument
-} from '../../../../../../../../services/api/clientDocument';
+import { createItem, updateItem, listItems, deleteItem } from '../../../../../../../../services/api/item';
 
 import EditModal from './components/EditModal';
 import SearchInput from './components/SearchInput';
@@ -55,14 +50,14 @@ const ClientDocumentEditor = props => {
     setSelectedClientDocument(null);
 
     if (isNewDocument) {
-      createClientDocument(clientModel.entity, clientModel.project_code, clientDocument).then(
+      createItem(clientModel.entity, clientModel.project_code, clientDocument).then(
         ({ data: createdClientDocument }) => {
           if (!mounted) return;
           setClientDocuments([createdClientDocument, ...clientDocuments]);
         }
       );
     } else {
-      updateClientDocument(clientDocument).then(() => {
+      updateItem(clientDocument).then(() => {
         if (!mounted) return;
         setClientDocuments(
           clientDocuments.map(_clientDocument =>
@@ -74,7 +69,7 @@ const ClientDocumentEditor = props => {
   };
 
   const handleDocumentDeletion = clientDocument => {
-    deleteClientDocument(clientDocument).then(() => {
+    deleteItem(clientDocument).then(() => {
       setClientDocuments(
         clientDocuments.filter(_clientDocument => _clientDocument._id !== clientDocument._id)
       );
@@ -87,15 +82,10 @@ const ClientDocumentEditor = props => {
 
   const handleChangePage = pageNumber => {
     setLoading(true);
-    getClientDocuments(
-      clientModel.entity,
-      project,
-      props.pageSize,
-      pageNumber,
-      {},
-      textSearch,
-      clientModel.fields.filter(field => field.important).map(field => field.key)
-    ).then(({ data: newClientDocuments }) => {
+    listItems(clientModel.entity, project, props.pageSize, pageNumber, {
+      text_search: textSearch,
+      text_search_fields: clientModel.fields.filter(field => field.important).map(field => field.key)
+    }).then(({ data: newClientDocuments }) => {
       setClientDocuments([...(pageNumber === 1 ? [] : clientDocuments), ...newClientDocuments]);
       setLoading(false);
     });
@@ -124,7 +114,7 @@ const ClientDocumentEditor = props => {
             action={isNewDocument ? 'create' : 'edit'}
           />
         )}
-        <PopoverTitle>{`Editor de ${clientModel.table_descriptive_name}`}</PopoverTitle>
+        <PopoverTitle>{`Editor de ${clientModel.name}`}</PopoverTitle>
         <SearchInput onChange={handleTextSearch} />
         <Table
           fields={importantFields}

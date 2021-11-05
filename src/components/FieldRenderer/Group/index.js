@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { FormLabel, Button } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import PropTypes from 'prop-types';
+import { v4 as uuid } from 'uuid';
 
 import { fieldShape } from '../../../utils/field';
 import InputGroup from '../../InputGroup';
@@ -22,7 +23,7 @@ const Group = props => {
   const [deletingIndex, setDeletingIndex] = useState(null);
 
   const handleAddValue = () => {
-    setDatas([...datas, {}]);
+    setDatas([...datas, { _id: uuid() }]);
   };
 
   const handleRemoveData = index => {
@@ -32,7 +33,7 @@ const Group = props => {
   };
 
   const handleChangeData = (changedIndex, newData) => {
-    const newDatas = datas.map((data, i) => (i === changedIndex ? newData : data));
+    const newDatas = datas.map((data, i) => (i === changedIndex ? { ...data, ...newData } : data));
 
     setDatas(newDatas);
     props.onChange(newDatas);
@@ -50,7 +51,9 @@ const Group = props => {
         onPrompt={handlePrompt}
         title={language.deleteMessage(field)}
       />
-      <FormLabel component="legend">{field.name || keyTranslation[field.key]}</FormLabel>
+      <FormLabel component="legend">
+        {(field.names && field.names[languageCode]) || field.name || keyTranslation[field.key]}
+      </FormLabel>
       {datas.map((data, i) => (
         <InputGroup key={i}>
           <CloseIcon
